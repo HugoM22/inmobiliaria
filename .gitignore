@@ -1,0 +1,40 @@
+﻿# .NET / VS
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.log
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Local secrets y configuraciones
+appsettings.*.local.json
+appsettings.Development.json
+# Tests y cobertura
+TestResults/
+*.coverage
+*.coveragexml
+.coverage/
+
+# IDEs varios
+.idea/
+*.DotSettings.user
+.ReSharper*/
+*_ReSharper*/
+
+# Bases de datos locales 
+*.db
+*.sqlite
+*.mdf
+*.ldf
+# Paquetes
+node_modules/
