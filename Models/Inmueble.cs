@@ -28,6 +28,8 @@ public class Inmueble
     [Required]
     public int PropietarioId { get; set; }
 
+    [Required]
+    public int TipoInmuebleId { get; set; }
     public TipoInmueble? TipoInmueble { get; set; }
     public Propietario? Propietario { get; set; }
 }

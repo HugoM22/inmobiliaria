@@ -1,3 +1,5 @@
+using Inmobiliaria1.Models;
+
 namespace Inmobiliaria1.Data.Repos;
 
 public interface IInmuebleRepository
