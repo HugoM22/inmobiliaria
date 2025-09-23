@@ -160,22 +160,19 @@ public class ContratoRepository : IContratoRepository
         }
         return lista;
     }
-    public async Task<int> FinalizarAsync(int contratoId, int finalizadoPorUsuarioId, DateTime fechaFinEfectiva,EstadoContrato estado)
+    public async Task<int> FinalizarAsync(int idContrato, int finalizadoPorUsuarioId, DateTime fechaFinEfectiva, EstadoContrato estado = EstadoContrato.Finalizado)
     {
-        const string sql = @"UPDATE Contratos SET
-        Estado = @Estado,
-        FechaFinEfectiva = @FechaFinEfectiva,
-        FinalizadoPorUsuarioId = @FinalizadoPorUsuarioId
+        const string sql = @"
+        UPDATE Contratos
+        SET Estado = @Estado, FechaFinEfectiva = @FechaFinEfectiva, FinalizadoPorUsuarioId = @UsuarioId
         WHERE Id = @Id;";
-
-        using var cn = new SqlConnection(_cs);
-        using var cmd = new SqlCommand(sql, cn);
-        cmd.Parameters.Add(new("@Estado", SqlDbType.NVarChar, 50) { Value = EstadoContrato.Finalizado });
-        cmd.Parameters.Add(new("@FechaFinEfectiva", SqlDbType.Date) { Value = fechaFinEfectiva });
-        cmd.Parameters.Add(new("@FinalizadoPorUsuarioId", SqlDbType.Int) { Value = finalizadoPorUsuarioId });
-        cmd.Parameters.Add(new("@Id", SqlDbType.Int) { Value = contratoId });
-
-        await cn.OpenAsync();
-        return await cmd.ExecuteNonQueryAsync();
+    using var cn = new SqlConnection(_cs);
+    using var cmd = new SqlCommand(sql, cn);
+    cmd.Parameters.Add(new("@Estado", SqlDbType.NVarChar, 50) { Value = estado.ToString() });
+    cmd.Parameters.Add(new("@FechaFinEfectiva", SqlDbType.DateTime) { Value = fechaFinEfectiva });
+    cmd.Parameters.Add(new("@UsuarioId", SqlDbType.Int) { Value = finalizadoPorUsuarioId });
+    cmd.Parameters.Add(new("@Id", SqlDbType.Int) { Value = idContrato });
+    await cn.OpenAsync();
+    return await cmd.ExecuteNonQueryAsync();
     }
 }
