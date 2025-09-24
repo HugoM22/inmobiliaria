@@ -1,0 +1,42 @@
+@model IEnumerable<Inmobiliaria1.Models.Inmueble>
+@{
+    ViewData["Title"] = "Inmuebles";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nuevo</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Dirección</th>
+            <th>Uso</th>
+            <th>Tipo</th>
+            <th>Amb.</th>
+            <th class="text-end">Precio</th>
+            <th>Estado</th>
+            <th>Propietario</th>
+            <th class="text-end">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@item.Direccion</td>
+            <td>@item.Uso</td>
+            <td>@item.TipoInmueble?.Descripcion</td>   @* <- texto, no Id *@
+            <td>@item.Ambientes</td>
+            <td class="text-end">@string.Format("{0:N2}", item.Precio)</td> @* <- formateo *@
+            <td>@item.Estado</td>
+            <td>@item.Propietario?.Apellido</td>       @* <- texto, no Id *@
+            <td class="text-end">
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Ver</a>
+                <a asp-action="Edit"    asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
+                <a asp-action="Delete"  asp-route-id="@item.Id" class="btn btn-sm btn-danger">Borrar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
