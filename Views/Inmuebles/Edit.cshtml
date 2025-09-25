@@ -1,87 +1,91 @@
 @model Inmobiliaria1.Models.Inmueble
-
 @{
     ViewData["Title"] = "Edit";
 }
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Edit</title>
-</head>
-<body>
-
-<h4>Inmueble</h4>
+<h1>Inmueble</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group mb-3">
                 <label asp-for="Direccion" class="control-label"></label>
                 <input asp-for="Direccion" class="form-control" />
                 <span asp-validation-for="Direccion" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Uso" class="control-label"></label>
-                <input asp-for="Uso" class="form-control" />
+                <select asp-for="Uso" class="form-control"
+                        asp-items="Html.GetEnumSelectList<Inmobiliaria1.Models. Uso>()">
+                </select>
                 <span asp-validation-for="Uso" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Ambientes" class="control-label"></label>
                 <input asp-for="Ambientes" class="form-control" />
                 <span asp-validation-for="Ambientes" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+           <div class="form-group mb-3">
                 <label asp-for="Precio" class="control-label"></label>
-                <input asp-for="Precio" class="form-control" />
+                @Html.TextBoxFor(m => m.Precio,
+                    new { @class = "form-control", type = "text", inputmode = "decimal",
+                            pattern = @"^-?\d+([\,\.]\d{1,2})?$", data_val = "false" })
                 <span asp-validation-for="Precio" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+
+            <div class="form-group mb-3">
                 <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
+                <select asp-for="Estado" class="form-control"
+                        asp-items="Html.GetEnumSelectList<Inmobiliaria1.Models.EstadoInmueble>()">
+                </select>
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Latitud" class="control-label"></label>
-                <input asp-for="Latitud" class="form-control" />
+                @Html.TextBoxFor(m => m.Latitud,
+                    new { @class = "form-control", type = "text", inputmode = "decimal",
+                            pattern = @"^-?\d+([\,\.]\d{1,6})?$", data_val = "false" })
                 <span asp-validation-for="Latitud" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Longitud" class="control-label"></label>
-                <input asp-for="Longitud" class="form-control" />
+                @Html.TextBoxFor(m => m.Longitud,
+                    new { @class = "form-control", type = "text", inputmode = "decimal",
+                            pattern = @"^-?\d+([\,\.]\d{1,6})?$", data_val = "false" })
                 <span asp-validation-for="Longitud" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="PropietarioId" class="control-label"></label>
-                <input asp-for="PropietarioId" class="form-control" />
+
+            <div class="form-group mb-3">
+                <label class="control-label">Propietario</label>
+                <select asp-for="PropietarioId" class="form-control"
+                        asp-items="ViewBag.PropietarioId">
+                    <option value="">-- Seleccione --</option>
+                </select>
                 <span asp-validation-for="PropietarioId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="TipoInmuebleId" class="control-label"></label>
-                <input asp-for="TipoInmuebleId" class="form-control" />
+
+            <div class="form-group mb-4">
+                <label class="control-label">Tipo de inmueble</label>
+                <select asp-for="TipoInmuebleId" class="form-control"
+                        asp-items="ViewBag.TipoInmuebleId">
+                    <option value="">-- Seleccione --</option>
+                </select>
                 <span asp-validation-for="TipoInmuebleId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-link">Back to List</a>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
+@section Scripts{
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-</body>
-</html>

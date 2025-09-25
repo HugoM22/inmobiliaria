@@ -26,8 +26,8 @@ public class InmuebleRepository : IInmuebleRepository
         cmd.Parameters.Add(new("@Ambientes", SqlDbType.Int) { Value = i.Ambientes });
         cmd.Parameters.Add(new("@Precio", SqlDbType.Decimal) { Precision = 18, Scale = 2, Value = i.Precio });
         cmd.Parameters.Add(new("@Estado", SqlDbType.NVarChar, 50) { Value = i.Estado.ToString() });
-        cmd.Parameters.Add(new("@Latitud", SqlDbType.Float) { Precision = 9, Scale = 6, Value = (object?)i.Latitud ?? DBNull.Value });
-        cmd.Parameters.Add(new("@Longitud", SqlDbType.Float) { Precision = 9, Scale = 6, Value = (object?)i.Longitud ?? DBNull.Value });
+        cmd.Parameters.Add(new("@Latitud", SqlDbType.Decimal) { Precision = 9, Scale = 6, Value = (object?)i.Latitud ?? DBNull.Value });
+        cmd.Parameters.Add(new("@Longitud", SqlDbType.Decimal) { Precision = 9, Scale = 6, Value = (object?)i.Longitud ?? DBNull.Value });
         cmd.Parameters.Add(new("@PropietarioId", SqlDbType.Int) { Value = i.PropietarioId });
         await cn.OpenAsync();
         var scalar = await cmd.ExecuteScalarAsync();
@@ -59,8 +59,8 @@ public class InmuebleRepository : IInmuebleRepository
         cmd.Parameters.Add(new("@Ambientes", SqlDbType.Int) { Value = i.Ambientes });
         cmd.Parameters.Add(new("@Precio", SqlDbType.Decimal) { Precision = 18, Scale = 2, Value = i.Precio });
         cmd.Parameters.Add(new("@Estado", SqlDbType.NVarChar, 50) { Value = i.Estado.ToString() });
-        cmd.Parameters.Add(new("@Latitud", SqlDbType.Float) { Precision = 9, Scale = 6, Value = (object?)i.Latitud ?? DBNull.Value });
-        cmd.Parameters.Add(new("@Longitud", SqlDbType.Float) { Precision = 9, Scale = 6, Value = (object?)i.Longitud ?? DBNull.Value });
+        cmd.Parameters.Add(new("@Latitud", SqlDbType.Decimal) { Precision = 9, Scale = 6, Value = (object?)i.Latitud ?? DBNull.Value });
+        cmd.Parameters.Add(new("@Longitud", SqlDbType.Decimal) { Precision = 9, Scale = 6, Value = (object?)i.Longitud ?? DBNull.Value });
         cmd.Parameters.Add(new("@PropietarioId", SqlDbType.Int) { Value = i.PropietarioId });
         await cn.OpenAsync();
         return await cmd.ExecuteNonQueryAsync();
@@ -78,78 +78,95 @@ public class InmuebleRepository : IInmuebleRepository
 {
     const string sql = @"
     SELECT 
-      i.Id,          
-      i.Direccion,     
-      i.Uso,        
-      i.TipoInmuebleId,
-      i.Ambientes,     
-      i.Precio,        
-      i.Estado,       
-      i.Latitud,       
-      i.Longitud,      
-      i.PropietarioId  
+      i.Id, i.Direccion, i.Uso,
+      i.TipoInmuebleId, t.Descripcion AS TipoDescripcion,
+      i.Ambientes, i.Precio, i.Estado,
+      i.Latitud, i.Longitud,
+      i.PropietarioId, p.Apellido AS PropApellido, p.Nombre AS PropNombre
     FROM Inmuebles i
     JOIN TipoInmuebles t ON t.Id = i.TipoInmuebleId
-    JOIN Propietarios   p ON p.Id = i.PropietarioId
+    JOIN Propietarios  p ON p.Id = i.PropietarioId
     WHERE i.Id = @Id;";
 
     using var cn = new SqlConnection(_cs);
     using var cmd = new SqlCommand(sql, cn);
-    cmd.Parameters.Add(new("@Id", SqlDbType.Int) { Value = id });
+    cmd.Parameters.Add(new("@Id", SqlDbType.Int){ Value = id });
 
     await cn.OpenAsync();
     using var dr = await cmd.ExecuteReaderAsync();
     if (!await dr.ReadAsync()) return null;
 
-    return new Inmueble
-    {
+    return new Inmueble {
         Id             = dr.GetInt32(0),
         Direccion      = dr.GetString(1),
         Uso            = Enum.Parse<Uso>(dr.GetString(2), true),
         TipoInmuebleId = dr.GetInt32(3),
-        Ambientes      = dr.GetInt32(4),
-        Precio         = dr.GetDecimal(5),
-        Estado         = Enum.Parse<EstadoInmueble>(dr.GetString(6), true),
-        Latitud        = dr.IsDBNull(7) ? null : dr.GetDecimal(7),
-        Longitud       = dr.IsDBNull(8) ? null : dr.GetDecimal(8),
-        PropietarioId  = dr.GetInt32(9)
+        TipoInmueble   = new TipoInmueble { Id = dr.GetInt32(3), Descripcion = dr.GetString(4) },
+        Ambientes      = dr.GetInt32(5),
+        Precio         = dr.GetDecimal(6),
+        Estado         = Enum.Parse<EstadoInmueble>(dr.GetString(7), true),
+        Latitud  = dr.IsDBNull(8) ? null : dr.GetDecimal(8),
+        Longitud = dr.IsDBNull(9) ? null : dr.GetDecimal(9),
+        PropietarioId  = dr.GetInt32(10),
+        Propietario    = new Propietario { Id = dr.GetInt32(10), Apellido = dr.GetString(11), Nombre = dr.GetString(12) }
     };
 }
     public async Task<List<Inmueble>> ObtenerTodosAsync(string? q = null, int? propietarioId = null, int? tipoId = null)
+{
+    var sql = @"
+    SELECT 
+        i.Id,
+        i.Direccion,
+        i.Uso,
+        i.TipoInmuebleId,
+        t.Descripcion   AS TipoDescripcion,
+        i.Ambientes,
+        i.Precio,
+        i.Estado,
+        i.PropietarioId,
+        p.Apellido      AS PropApellido,
+        p.Nombre        AS PropNombre
+    FROM Inmuebles i
+    JOIN TipoInmuebles t ON t.Id = i.TipoInmuebleId
+    JOIN Propietarios  p ON p.Id = i.PropietarioId
+    WHERE 1=1";
+
+    if (!string.IsNullOrWhiteSpace(q)) sql += " AND (i.Direccion LIKE @q OR i.Uso LIKE @q)";
+    if (propietarioId.HasValue)        sql += " AND i.PropietarioId = @PropietarioId";
+    if (tipoId.HasValue)               sql += " AND i.TipoInmuebleId = @TipoId";
+    sql += " ORDER BY i.Direccion;";
+
+    using var cn = new SqlConnection(_cs);
+    using var cmd = new SqlCommand(sql, cn);
+    if (!string.IsNullOrWhiteSpace(q)) cmd.Parameters.Add(new("@q", SqlDbType.NVarChar, 120){ Value = $"%{q}%" });
+    if (propietarioId.HasValue)        cmd.Parameters.Add(new("@PropietarioId", SqlDbType.Int){ Value = propietarioId.Value });
+    if (tipoId.HasValue)               cmd.Parameters.Add(new("@TipoId", SqlDbType.Int){ Value = tipoId.Value });
+
+    await cn.OpenAsync();
+    using var rd = await cmd.ExecuteReaderAsync();
+    var list = new List<Inmueble>();
+    while (await rd.ReadAsync())
     {
-        var sql = @"
-        SELECT i.Id, i.Direccion, i.Uso, i.TipoInmuebleId, i.Ambientes, i.Precio, i.Estado,
-            i.PropietarioId, t.Descripcion AS TipoNombre
-        FROM Inmuebles i
-        JOIN TipoInmuebles t ON t.Id = i.TipoInmuebleId
-        WHERE 1=1";
-        if (!string.IsNullOrWhiteSpace(q)) sql += " AND (i.Direccion LIKE @q OR i.Uso LIKE @q)";
-        if (propietarioId.HasValue) sql += " AND i.PropietarioId=@PropietarioId";
-        if (tipoId.HasValue)       sql += " AND i.TipoInmuebleId=@TipoId";
-        sql += " ORDER BY i.Direccion;";
-
-        using var cn = new SqlConnection(_cs);
-        using var cmd = new SqlCommand(sql, cn);
-        if (!string.IsNullOrWhiteSpace(q)) cmd.Parameters.Add(new("@q", SqlDbType.NVarChar, 120){ Value = $"%{q}%" });
-        if (propietarioId.HasValue) cmd.Parameters.Add(new("@PropietarioId", SqlDbType.Int){ Value = propietarioId.Value });
-        if (tipoId.HasValue)        cmd.Parameters.Add(new("@TipoId", SqlDbType.Int){ Value = tipoId.Value });
-
-        await cn.OpenAsync();
-        using var rd = await cmd.ExecuteReaderAsync();
-        var list = new List<Inmueble>();
-        while (await rd.ReadAsync())
-        {
-            list.Add(new Inmueble {
-                Id = rd.GetInt32(0),
-                Direccion = rd.GetString(1),
-                Uso = Enum.Parse<Uso>(rd.GetString(2)),
-                TipoInmuebleId = rd.GetInt32(3),
-                Ambientes = rd.GetInt32(4),
-                Precio = rd.GetDecimal(5),
-                Estado = Enum.Parse<EstadoInmueble>(rd.GetString(6)),
-                PropietarioId = rd.GetInt32(7)
-            });
-        }
-        return list;
+        list.Add(new Inmueble {
+            Id             = rd.GetInt32(0),
+            Direccion      = rd.GetString(1),
+            Uso            = Enum.Parse<Uso>(rd.GetString(2), true),
+            TipoInmuebleId = rd.GetInt32(3),
+            TipoInmueble   = new TipoInmueble {
+                                Id = rd.GetInt32(3),
+                                Descripcion = rd.GetString(4)
+                              },
+            Ambientes      = rd.GetInt32(5),
+            Precio         = rd.GetDecimal(6),
+            Estado         = Enum.Parse<EstadoInmueble>(rd.GetString(7), true),
+            PropietarioId  = rd.GetInt32(8),
+            Propietario    = new Propietario {
+                                Id = rd.GetInt32(8),
+                                Apellido = rd.GetString(9),
+                                Nombre   = rd.GetString(10)
+                              }
+        });
     }
+    return list;
+}
 }
