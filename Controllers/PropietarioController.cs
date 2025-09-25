@@ -26,7 +26,10 @@ public class PropietariosController : Controller
     public async Task<IActionResult> Create(Propietario p)
     {
         if (!ModelState.IsValid) return View(p);
-        try { await _repo.AltaAsync(p); return RedirectToAction(nameof(Index)); }
+        var nombreOriginal = p.Nombre;
+        try {
+            await _repo.AltaAsync(p);
+            return RedirectToAction(nameof(Index)); }
         catch (SqlException ex) when (ex.Number is 2601 or 2627)
         { ModelState.AddModelError("", "DNI o Email ya existe."); return View(p); }
     }

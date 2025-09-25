@@ -2,9 +2,8 @@ namespace Inmobiliaria1.Models;
 
 public enum RolUsuario
 {
-    SuperAdmin = 1,
-    Admin = 2,
-    Empleado = 3
+    Administrador = 1,
+    Empleado = 2
 }
 
 public enum EstadoContrato

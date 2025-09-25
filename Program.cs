@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // MVC
 builder.Services.AddControllersWithViews();
 
-// ---- Localización es-AR (para que el model binder acepte coma) ----
+// ---- Localización es-AR
 var supportedCultures = new[] { new CultureInfo("es-AR") };
 builder.Services.Configure<RequestLocalizationOptions>(o =>
 {
@@ -18,7 +18,6 @@ builder.Services.Configure<RequestLocalizationOptions>(o =>
     o.SupportedCultures = supportedCultures;
     o.SupportedUICultures = supportedCultures;
 });
-// -------------------------------------------------------------------
 
 // Repos
 builder.Services.AddScoped<IPropietarioRepository, PropietarioRepository>();

@@ -8,7 +8,7 @@ public class Usuario
     [Required, EmailAddress, StringLength(120)]
     public string Email { get; set; } = "";
     [Required, StringLength(100)]
-    public string Password { get; set; } = "";
+    public string PasswordHash { get; set; } = "";
 
     [StringLength(250)]
     public string? Avatar { get; set; }
