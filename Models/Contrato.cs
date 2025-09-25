@@ -16,7 +16,7 @@ public class Contrato
     [DataType(DataType.Currency)]
     public decimal MontoMesual { get; set; }
 
-    [Required, StringLength(50)]
+    [Required]
     public EstadoContrato Estado { get; set; } = EstadoContrato.Vigente;
 
     [DataType(DataType.Date)]
@@ -26,7 +26,7 @@ public class Contrato
     public DateTime FechaFin { get; set; }
 
     [DataType(DataType.Date)]
-    public DateTime FechaFinEfectiva { get; set; }
+    public DateTime? FechaFinEfectiva { get; set; }
 
     [Required]
     public int? CreadoPorUsuarioId { get; set; }

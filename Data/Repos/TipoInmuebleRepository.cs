@@ -12,7 +12,7 @@ public class TipoInmuebleRepository : ITipoInmuebleRepository
 
     public async Task<List<TipoInmueble>> ObtenerTodosAsync()
     {
-        const string sql = "SELECT Id, Nombre FROM TipoInmuebles ORDER BY Nombre;";
+        const string sql = "SELECT Id, Descripcion FROM TipoInmuebles ORDER BY Descripcion;";
         using var cn = new SqlConnection(_cs);
         using var cmd = new SqlCommand(sql, cn);
         await cn.OpenAsync();
@@ -25,7 +25,7 @@ public class TipoInmuebleRepository : ITipoInmuebleRepository
 
     public async Task<TipoInmueble?> ObtenerPorIdAsync(int id)
     {
-        const string sql = "SELECT Id, Nombre FROM TipoInmuebles WHERE Id=@Id;";
+        const string sql = "SELECT Id, Descripcion FROM TipoInmuebles WHERE Id=@Id;";
         using var cn = new SqlConnection(_cs);
         using var cmd = new SqlCommand(sql, cn);
         cmd.Parameters.Add(new("@Id", SqlDbType.Int){ Value = id });
@@ -37,10 +37,10 @@ public class TipoInmuebleRepository : ITipoInmuebleRepository
 
     public async Task<int> AltaAsync(TipoInmueble x)
     {
-        const string sql = "INSERT INTO TipoInmuebles (Nombre) VALUES (@Nombre); SELECT CAST(SCOPE_IDENTITY() AS int);";
+        const string sql = "INSERT INTO TipoInmuebles (Descripcion) VALUES (@Descripcion); SELECT CAST(SCOPE_IDENTITY() AS int);";
         using var cn = new SqlConnection(_cs);
         using var cmd = new SqlCommand(sql, cn);
-        cmd.Parameters.Add(new("@Nombre", SqlDbType.NVarChar, 100){ Value = x.Descripcion });
+        cmd.Parameters.Add(new("@Descripcion", SqlDbType.NVarChar, 100){ Value = x.Descripcion });
         await cn.OpenAsync();
         x.Id = Convert.ToInt32(await cmd.ExecuteScalarAsync());
         return x.Id;
@@ -48,11 +48,11 @@ public class TipoInmuebleRepository : ITipoInmuebleRepository
 
     public async Task<int> ModificarAsync(TipoInmueble x)
     {
-        const string sql = "UPDATE TipoInmuebles SET Nombre=@Nombre WHERE Id=@Id;";
+        const string sql = "UPDATE TipoInmuebles SET Descripcion=@Descripcion WHERE Id=@Id;";
         using var cn = new SqlConnection(_cs);
         using var cmd = new SqlCommand(sql, cn);
         cmd.Parameters.Add(new("@Id", SqlDbType.Int){ Value = x.Id });
-        cmd.Parameters.Add(new("@Nombre", SqlDbType.NVarChar, 100){ Value = x.Descripcion });
+        cmd.Parameters.Add(new("@Descripcion", SqlDbType.NVarChar, 100){ Value = x.Descripcion });
         await cn.OpenAsync();
         return await cmd.ExecuteNonQueryAsync();
     }

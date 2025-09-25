@@ -75,45 +75,51 @@ public class InmuebleRepository : IInmuebleRepository
         return await cmd.ExecuteNonQueryAsync();
     }
     public async Task<Inmueble?> ObtenerPorIdAsync(int id)
+{
+    const string sql = @"
+    SELECT 
+      i.Id,          
+      i.Direccion,     
+      i.Uso,        
+      i.TipoInmuebleId,
+      i.Ambientes,     
+      i.Precio,        
+      i.Estado,       
+      i.Latitud,       
+      i.Longitud,      
+      i.PropietarioId  
+    FROM Inmuebles i
+    JOIN TipoInmuebles t ON t.Id = i.TipoInmuebleId
+    JOIN Propietarios   p ON p.Id = i.PropietarioId
+    WHERE i.Id = @Id;";
+
+    using var cn = new SqlConnection(_cs);
+    using var cmd = new SqlCommand(sql, cn);
+    cmd.Parameters.Add(new("@Id", SqlDbType.Int) { Value = id });
+
+    await cn.OpenAsync();
+    using var dr = await cmd.ExecuteReaderAsync();
+    if (!await dr.ReadAsync()) return null;
+
+    return new Inmueble
     {
-        const string sql = @"
-        SELECT i.id, i.Direccion, i.Uso, i.TipoInmuebleId, t.Descripcion AS TipoInmuebleDescripcion,
-               i.Ambientes, i.Precio, i.Estado, i.Latitud, i.Longitud, i.PropietarioId,
-               t.Nombre AS TipoNombre,
-               p.Apellido, p.Nombre
-        FROM Inmuebles i
-        JOIN TipoInmuebles t ON t.Id = i.TipoInmuebleId
-        JOIN Propietarios   p ON p.Id = i.PropietarioId
-        WHERE i.Id=@Id;";
-
-        using var cn = new SqlConnection(_cs);
-        using var cmd = new SqlCommand(sql, cn);
-        cmd.Parameters.Add(new("@Id", SqlDbType.Int) { Value = id });
-
-        await cn.OpenAsync();
-        using var dr = await cmd.ExecuteReaderAsync();
-        if (!await dr.ReadAsync()) return null;
-
-        return new Inmueble
-        {
-            Id = dr.GetInt32(0),
-            Direccion = dr.GetString(1),
-            Uso = Enum.Parse<Uso>(dr.GetString(2)),
-            TipoInmuebleId = dr.GetInt32(3),
-            Ambientes = dr.GetInt32(4),
-            Precio = dr.GetDecimal(5),
-            Estado = Enum.Parse<EstadoInmueble>(dr.GetString(6)),
-            Latitud = dr.IsDBNull(7) ? null : dr.GetDecimal(7),
-            Longitud = dr.IsDBNull(8) ? null : dr.GetDecimal(8),
-            PropietarioId = dr.GetInt32(9)
-        };
-
-    }
+        Id             = dr.GetInt32(0),
+        Direccion      = dr.GetString(1),
+        Uso            = Enum.Parse<Uso>(dr.GetString(2), true),
+        TipoInmuebleId = dr.GetInt32(3),
+        Ambientes      = dr.GetInt32(4),
+        Precio         = dr.GetDecimal(5),
+        Estado         = Enum.Parse<EstadoInmueble>(dr.GetString(6), true),
+        Latitud        = dr.IsDBNull(7) ? null : dr.GetDecimal(7),
+        Longitud       = dr.IsDBNull(8) ? null : dr.GetDecimal(8),
+        PropietarioId  = dr.GetInt32(9)
+    };
+}
     public async Task<List<Inmueble>> ObtenerTodosAsync(string? q = null, int? propietarioId = null, int? tipoId = null)
     {
         var sql = @"
         SELECT i.Id, i.Direccion, i.Uso, i.TipoInmuebleId, i.Ambientes, i.Precio, i.Estado,
-            i.PropietarioId, t.Nombre AS TipoNombre
+            i.PropietarioId, t.Descripcion AS TipoNombre
         FROM Inmuebles i
         JOIN TipoInmuebles t ON t.Id = i.TipoInmuebleId
         WHERE 1=1";

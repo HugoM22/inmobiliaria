@@ -1,87 +1,68 @@
 @model Inmobiliaria1.Models.Contrato
-
 @{
-    Layout = null;
+    ViewData["Title"] = "Detalle de Contrato";
+
+    string inmuebleStr = Model.Inmueble != null
+        ? Model.Inmueble.Direccion
+        : $"(Id: {Model.InmuebleId})";
+
+    string inquilinoStr = Model.Inquilino != null
+        ? $"{Model.Inquilino.Apellido}, {Model.Inquilino.Nombre}"
+        : $"(Id: {Model.InquilinoId})";
+
+    string fechaInicioStr = Model.FechaInicio.ToString("yyyy-MM-dd");
+    string fechaFinStr    = Model.FechaFin.ToString("yyyy-MM-dd");
+    string fechaFinEfStr  = Model.FechaFinEfectiva?.ToString("yyyy-MM-dd") ?? "—";
+
+    string estadoStr = Model.Estado.ToString();
+
+    string creadoPorStr = Model.CreadoPor?.Email ?? $"(Id: {Model.CreadoPorUsuarioId})";
+    string finalizadoPorStr = Model.FinalizadoPor?.Email
+        ?? (Model.FinalizadoPorUsuarioId.HasValue ? $"(Id: {Model.FinalizadoPorUsuarioId})" : "—");
 }
 
-<!DOCTYPE html>
+<h1>@ViewData["Title"]</h1>
+<hr />
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Details</title>
-</head>
-<body>
+<div class="card mb-3">
+    <div class="card-header">Contrato #@Model.Id</div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Inmueble</dt>
+            <dd class="col-sm-9">@inmuebleStr</dd>
 
-<div>
-    <h4>Contrato</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InmuebleId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InmuebleId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InquilinoId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InquilinoId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MontoMesual)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MontoMesual)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaInicio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaInicio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaFin)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaFin)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaFinEfectiva)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaFinEfectiva)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreadoPorUsuarioId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreadoPorUsuarioId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FinalizadoPorUsuarioId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FinalizadoPorUsuarioId)
-        </dd>
-    </dl>
+            <dt class="col-sm-3">Inquilino</dt>
+            <dd class="col-sm-9">@inquilinoStr</dd>
+
+            <dt class="col-sm-3">Fecha inicio</dt>
+            <dd class="col-sm-9">@fechaInicioStr</dd>
+
+            <dt class="col-sm-3">Fecha fin (pactada)</dt>
+            <dd class="col-sm-9">@fechaFinStr</dd>
+
+            <dt class="col-sm-3">Fecha fin efectiva</dt>
+            <dd class="col-sm-9">@fechaFinEfStr</dd>
+
+            <dt class="col-sm-3">Estado</dt>
+            <dd class="col-sm-9">@estadoStr</dd>
+
+            <dt class="col-sm-3">Monto mensual</dt>
+            <dd class="col-sm-9">@string.Format("{0:N2}", Model.MontoMesual)</dd>
+
+            <dt class="col-sm-3">Creado por</dt>
+            <dd class="col-sm-9">@creadoPorStr</dd>
+
+            <dt class="col-sm-3">Finalizado por</dt>
+            <dd class="col-sm-9">@finalizadoPorStr</dd>
+        </dl>
+    </div>
 </div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+
+<div class="d-flex gap-2">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    <a asp-controller="Pagos" asp-action="Index" asp-route-contratoId="@Model.Id" class="btn btn-info">Ver pagos</a>
 </div>
-</body>
-</html>
+
+
+

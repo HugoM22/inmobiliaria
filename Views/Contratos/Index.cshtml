@@ -1,97 +1,61 @@
 @model IEnumerable<Inmobiliaria1.Models.Contrato>
+@using Inmobiliaria1.Models
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Index";
+    string EstadoBadge(EstadoContrato e) => e switch
+    {
+        EstadoContrato.Vigente    => "badge bg-success",
+        EstadoContrato.Borrador   => "badge bg-secondary",
+        EstadoContrato.Finalizado => "badge bg-dark",
+        EstadoContrato.Rescindido => "badge bg-danger",
+        _ => "badge bg-light text-dark"
+    };
 }
 
-<!DOCTYPE html>
+<h1>Index</h1>
+<p><a asp-action="Create">Create New</a></p>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InmuebleId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InquilinoId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MontoMesual)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaInicio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaFin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaFinEfectiva)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreadoPorUsuarioId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FinalizadoPorUsuarioId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InmuebleId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InquilinoId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MontoMesual)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaInicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaFin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaFinEfectiva)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreadoPorUsuarioId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FinalizadoPorUsuarioId)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">No hay contratos.</div>
 }
-    </tbody>
-</table>
-</body>
-</html>
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Inquilino</th>
+                <th>Inmueble</th>
+                <th>FechaInicio</th>
+                <th>FechaFin</th>
+                <th>Estado</th>
+                <th class="text-end">MontoMensual</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var c in Model)
+        {
+            var inq = c.Inquilino != null ? $"{c.Inquilino.Apellido}, {c.Inquilino.Nombre}" : $"(Id: {c.InquilinoId})";
+            var inm = c.Inmueble  != null ? c.Inmueble.Direccion : $"(Id: {c.InmuebleId})";
+            <tr>
+                <td>@inq</td>
+                <td>@inm</td>
+                <td>@c.FechaInicio.ToString("dd/MM/yyyy")</td>
+                <td>@c.FechaFin.ToString("dd/MM/yyyy")</td>
+                <td><span class="@EstadoBadge(c.Estado)">@c.Estado</span></td>
+                <td class="text-end">@string.Format("{0:N2}", c.MontoMesual)</td>
+                <td class="text-nowrap">
+                    <a asp-action="Edit" asp-route-id="@c.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@c.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@c.Id">Delete</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+
+
