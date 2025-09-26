@@ -1,0 +1,47 @@
+@model IEnumerable<Inmobiliaria1.Models.Inmueble>
+@using Inmobiliaria1.Models
+
+@{
+    ViewData["Title"] = "Inmuebles disponibles";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@ViewData["Title"]</h2>
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
+</div>
+
+@if (Model?.Any() != true)
+{
+    <div class="alert alert-info">No hay inmuebles publicados.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Dirección</th>
+                <th>Uso</th>
+                <th>Amb.</th>
+                <th class="text-end">Precio</th>
+                <th>Estado</th>
+                <th class="text-end" style="width:120px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@i.Direccion</td>
+                <td>@i.Uso</td>
+                <td>@i.Ambientes</td>
+                <td class="text-end">@i.Precio.ToString("C")</td>
+                <td>@Html.DisplayFor(_ => i.Estado)</td>
+                <td class="text-end">
+                    <a asp-action="Details" asp-route-id="@i.Id" class="btn btn-sm btn-outline-secondary">Ver</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+

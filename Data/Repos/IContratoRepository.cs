@@ -9,6 +9,7 @@ public interface IContratoRepository
     Task<int> BorrarAsync(int id);
     Task<Contrato?> ObtenerPorIdAsync(int id);
     Task<List<Contrato>> ObtenerTodosAsync(string? q = null, int? inmuebleId = null, int? inquilinoId = null);
+    Task<bool> ExisteSolapamientoAsync(int inmuebleId, DateTime inicio, DateTime fin, int? excluirId = null);
 
     Task<int> FinalizarAsync(int idContrato, int finalizadoPorUsuarioId,DateTime fechaFinEfectiva, EstadoContrato estado = EstadoContrato.Finalizado);
 }

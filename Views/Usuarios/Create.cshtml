@@ -1,0 +1,18 @@
+@model Inmobiliaria1.Models.Usuario
+@{
+    ViewData["Title"] = "Nuevo usuario";
+    ViewBag.ShowPasswordInput = true;
+}
+<h2 class="mb-3">Nuevo usuario</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="card p-3">
+    <partial name="_Form" model="Model" />
+    <div class="text-end">
+        <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+        <button class="btn btn-success" type="submit">Guardar</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

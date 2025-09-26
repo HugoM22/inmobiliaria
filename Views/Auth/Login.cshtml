@@ -1,0 +1,20 @@
+@model string
+@{
+    ViewData["Title"] = "Ingresar";
+    var returnUrl = Model;
+}
+<h2 class="mb-3">Ingresar</h2>
+
+<form asp-action="Login" asp-controller="Auth" method="post" class="card p-3">
+    <input type="hidden" name="returnUrl" value="@returnUrl" />
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input name="email" type="email" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Contraseña</label>
+        <input name="password" type="password" class="form-control" required />
+    </div>
+    <div class="text-danger">@Html.ValidationSummary(false)</div>
+    <button type="submit" class="btn btn-primary">Entrar</button>
+</form>

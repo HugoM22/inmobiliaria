@@ -1,87 +1,49 @@
 @model Inmobiliaria1.Models.Pago
-
+@using Inmobiliaria1.Models
 @{
-    Layout = null;
+    var c  = (Inmobiliaria1.Models.Contrato)ViewBag.Contrato;
+    var ar = System.Globalization.CultureInfo.GetCultureInfo("es-AR");
+    ViewData["Title"] = $"Pago #{Model.Numero}";
+}
+<h3>@ViewData["Title"] – contrato #@c.Id</h3>
+
+<dl class="row">
+    <dt class="col-sm-3">Fecha</dt>
+    <dd class="col-sm-9">@Model.Fecha.ToString("dd/MM/yyyy")</dd>
+
+    <dt class="col-sm-3">Importe</dt>
+    <dd class="col-sm-9">@Model.Importe.ToString("C", ar) @(Model.Multa ? "(multa)" : "")</dd>
+
+    <dt class="col-sm-3">Detalle</dt>
+    <dd class="col-sm-9">@Model.Detalle</dd>
+
+    <dt class="col-sm-3">Estado</dt>
+    <dd class="col-sm-9">@Model.Estado</dd>
+</dl>
+
+@if (User.IsInRole(nameof(RolUsuario.Administrador)))
+{
+    <h5>Auditoría</h5>
+    <dl class="row">
+        <dt class="col-sm-3">Creado por</dt>
+        <dd class="col-sm-9">@Model.CreadoPorUsuarioId</dd>
+        <dt class="col-sm-3">Anulado por</dt>
+        <dd class="col-sm-9">@(Model.AnuladoPorUsuarioId?.ToString() ?? "-")</dd>
+    </dl>
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Details</title>
-</head>
-<body>
-
-<div>
-    <h4>Pago</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Numero)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Numero)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Fecha)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Fecha)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Importe)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Importe)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Detalle)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Detalle)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Multa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Multa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContratoId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContratoId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreadoPorUsuarioId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreadoPorUsuarioId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AnuladoPorUsuarioId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AnuladoPorUsuarioId)
-        </dd>
-    </dl>
+<div class="d-flex gap-2">
+    <a asp-action="Index" asp-route-contratoId="@Model.ContratoId" class="btn btn-outline-secondary">Volver</a>
+    @if (Model.Estado == EstadoPago.Activo)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar detalle</a>
+        @if (User.IsInRole(nameof(RolUsuario.Administrador)))
+        {
+            <form asp-action="Anular" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button class="btn btn-danger" onclick="return confirm('¿Anular pago?');">Anular</button>
+            </form>
+        }
+    }
 </div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
-</div>
-</body>
-</html>

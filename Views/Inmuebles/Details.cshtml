@@ -1,9 +1,16 @@
 @model Inmobiliaria1.Models.Inmueble
+@using Inmobiliaria1.Models
+
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles del inmueble";
 }
-<h1>Inmueble</h1>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@ViewData["Title"]</h2>
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
+</div>
 <hr />
+
 <dl class="row">
     <dt class="col-sm-2">Dirección</dt>
     <dd class="col-sm-10">@Model.Direccion</dd>
@@ -18,7 +25,7 @@
     <dd class="col-sm-10">@Model.Precio.ToString("C")</dd>
 
     <dt class="col-sm-2">Estado</dt>
-    <dd class="col-sm-10">@Model.Estado</dd>
+    <dd class="col-sm-10">@Html.DisplayFor(_ => Model.Estado)</dd>
 
     <dt class="col-sm-2">Latitud</dt>
     <dd class="col-sm-10">
@@ -37,8 +44,9 @@
     <dd class="col-sm-10">@Model.TipoInmueble?.Descripcion</dd>
 </dl>
 
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<p class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
+    <a asp-action="Index" class="btn btn-link">Volver al listado</a>
 </p>
+
 

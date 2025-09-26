@@ -28,7 +28,6 @@ public class Contrato
     [DataType(DataType.Date)]
     public DateTime? FechaFinEfectiva { get; set; }
 
-    [Required]
     public int? CreadoPorUsuarioId { get; set; }
     public int? FinalizadoPorUsuarioId { get; set; }
 

@@ -6,20 +6,20 @@ public class Pago
 {
     public int Id { get; set; }
 
-    [Required, Range(1, 240)]
     public int Numero { get; set; }
 
     [DataType(DataType.Date)]
     public DateTime Fecha { get; set; } = DateTime.Today;
 
-    [Range(0.01, 9999999)]
+    [Display(Name = "Importe")]
+    [Range(0.01, 9999999, ErrorMessage = "El {0} debe ser un número válido mayor que 0.")]
     [DataType(DataType.Currency)]
     public decimal Importe { get; set; }
 
     [StringLength(200)]
     public string? Detalle { get; set; }
 
-    [Required, StringLength(20)]
+    [Required, EnumDataType(typeof(EstadoPago))]
     public EstadoPago Estado { get; set; } = EstadoPago.Activo;
 
     public bool Multa { get; set; } = false;
@@ -33,6 +33,6 @@ public class Pago
     public int? AnuladoPorUsuarioId { get; set; }
 
     public Contrato? Contrato { get; set; }
-    public Usuario? CreadoPor { get; set; } 
+    public Usuario? CreadoPor { get; set; }
     public Usuario? AnuladoPor { get; set; }
 }

@@ -60,8 +60,8 @@
 
 <div class="d-flex gap-2">
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+    <a class="btn btn-outline-primary" asp-controller="Pagos" asp-action="Index" asp-route-contratoId="@Model.Id">Ver pagos</a>
     <a asp-action="Index" class="btn btn-secondary">Volver</a>
-    <a asp-controller="Pagos" asp-action="Index" asp-route-contratoId="@Model.Id" class="btn btn-info">Ver pagos</a>
 </div>
 
 

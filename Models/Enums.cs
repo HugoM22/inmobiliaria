@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Inmobiliaria1.Models;
 
 public enum RolUsuario
@@ -29,7 +31,10 @@ public enum Uso
 
 public enum EstadoInmueble
 {
+    [Display(Name = "Disponible")]
     Publicado = 1,
+    [Display(Name = "Suspendido")]
     Suspendido = 2,
+    [Display(Name = "En uso")]
     EnUso = 3
 }

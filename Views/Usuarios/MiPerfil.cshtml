@@ -1,0 +1,65 @@
+@model Inmobiliaria1.Models.Usuario
+@{
+    ViewData["Title"] = "Mi perfil";
+}
+<h2 class="mb-3">Mi perfil</h2>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card p-3 text-center">
+            <div class="mb-3">
+                @if (!string.IsNullOrEmpty(Model.Avatar))
+                {
+                    <img src="@Url.Content(Model.Avatar)" style="height:140px;width:140px;object-fit:cover;border-radius:50%;" />
+                }
+                else
+                {
+                    <div class="bg-light d-inline-flex align-items-center justify-content-center"
+                         style="height:140px;width:140px;border-radius:50%;">Sin avatar</div>
+                }
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Avatar))
+            {
+                <form asp-action="BorrarAvatar" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button class="btn btn-outline-danger btn-sm" type="submit">Eliminar avatar</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <form asp-action="EditarPerfil" method="post" enctype="multipart/form-data" class="card p-3">
+            <input type="hidden" asp-for="Id" />
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Nuevo avatar (opcional)</label>
+                <input type="file" name="avatarFile" class="form-control" accept="image/*" />
+            </div>
+            <div class="text-end">
+                <button class="btn btn-primary" type="submit">Guardar cambios</button>
+            </div>
+        </form>
+
+        <form asp-controller="Usuarios" asp-action="CambiarPassword" method="post" class="card p-3 mt-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="UsuarioId" value="@Model.Id" />
+            <h5>Cambiar contraseña</h5>
+            <div class="mb-3">
+                <label class="form-label">Contraseña nueva</label>
+                <input type="password" name="PasswordNueva" class="form-control" required minlength="6" />
+            </div>
+            <div class="text-end">
+                <button class="btn btn-warning" type="submit">Actualizar contraseña</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

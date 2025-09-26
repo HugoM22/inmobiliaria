@@ -1,87 +1,91 @@
 @model Inmobiliaria1.Models.Contrato
-
+@using Inmobiliaria1.Models
 @{
-    Layout = null;
+    ViewData["Title"] = "Editar contrato";
 }
 
-<!DOCTYPE html>
+<h3 class="mb-3">@ViewData["Title"]</h3>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Edit</title>
-</head>
-<body>
+<form asp-action="Edit" method="post" class="card p-3">
+    @Html.AntiForgeryToken()
 
-<h4>Contrato</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="InmuebleId" class="control-label"></label>
-                <input asp-for="InmuebleId" class="form-control" />
-                <span asp-validation-for="InmuebleId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="InquilinoId" class="control-label"></label>
-                <input asp-for="InquilinoId" class="form-control" />
-                <span asp-validation-for="InquilinoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MontoMesual" class="control-label"></label>
-                <input asp-for="MontoMesual" class="form-control" />
-                <span asp-validation-for="MontoMesual" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaInicio" class="control-label"></label>
-                <input asp-for="FechaInicio" class="form-control" />
-                <span asp-validation-for="FechaInicio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaFin" class="control-label"></label>
-                <input asp-for="FechaFin" class="form-control" />
-                <span asp-validation-for="FechaFin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaFinEfectiva" class="control-label"></label>
-                <input asp-for="FechaFinEfectiva" class="form-control" />
-                <span asp-validation-for="FechaFinEfectiva" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreadoPorUsuarioId" class="control-label"></label>
-                <input asp-for="CreadoPorUsuarioId" class="form-control" />
-                <span asp-validation-for="CreadoPorUsuarioId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FinalizadoPorUsuarioId" class="control-label"></label>
-                <input asp-for="FinalizadoPorUsuarioId" class="form-control" />
-                <span asp-validation-for="FinalizadoPorUsuarioId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <!-- Id -->
+    <input asp-for="Id" type="hidden" />
+
+    <!-- Inmueble -->
+    <div class="mb-3">
+        <label asp-for="InmuebleId" class="form-label"></label>
+        <select asp-for="InmuebleId" class="form-select" asp-items="ViewBag.InmuebleId" id="InmuebleId"></select>
+        <span asp-validation-for="InmuebleId" class="text-danger"></span>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <!-- Inquilino -->
+    <div class="mb-3">
+        <label asp-for="InquilinoId" class="form-label"></label>
+        <select asp-for="InquilinoId" class="form-select" asp-items="ViewBag.InquilinoId"></select>
+        <span asp-validation-for="InquilinoId" class="text-danger"></span>
+    </div>
+
+    <!-- Monto mensual: no editable -->
+    <div class="mb-3">
+        <label asp-for="MontoMesual" class="form-label"></label>
+
+        <input type="hidden" asp-for="MontoMesual" id="MontoMesual" />
+
+        <input type="text"
+            class="form-control"
+            id="MontoMesual_display"
+            value="@Model.MontoMesual.ToString("C")"
+            readonly />
+
+        <span asp-validation-for="MontoMesual" class="text-danger"></span>
+        <div class="form-text">Se define por el inmueble seleccionado.</div>
+    </div>
+
+    <!-- Estado -->
+    <div class="mb-3">
+        <label asp-for="Estado" class="form-label"></label>
+        <select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<EstadoContrato>()"></select>
+        <span asp-validation-for="Estado" class="text-danger"></span>
+    </div>
+
+    <!-- Fechas -->
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="FechaInicio" class="form-label"></label>
+            <input asp-for="FechaInicio" type="date" class="form-control" />
+            <span asp-validation-for="FechaInicio" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="FechaFin" class="form-label"></label>
+            <input asp-for="FechaFin" type="date" class="form-control" />
+            <span asp-validation-for="FechaFin" class="text-danger"></span>
+        </div>
+    </div>
+
+    <input asp-for="CreadoPorUsuarioId" type="hidden" />
+    <input asp-for="FinalizadoPorUsuarioId" type="hidden" />
+
+    <div class="mt-3 d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById("InmuebleId")?.addEventListener("change", async function () {
+            const id = this.value;
+            if (!id) return;
+            const r = await fetch(`/Inmuebles/Precio?id=${id}`);
+            if (!r.ok) return;
+            const precio = await r.text();
+            const input = document.getElementById("MontoMesual");
+            if (input) input.value = precio;
+        });
+    </script>
 }
-</body>
-</html>
+

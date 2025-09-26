@@ -1,61 +1,72 @@
 @model IEnumerable<Inmobiliaria1.Models.Contrato>
 @using Inmobiliaria1.Models
-
 @{
-    ViewData["Title"] = "Index";
-    string EstadoBadge(EstadoContrato e) => e switch
+    ViewData["Title"] = "Contratos";
+    var ar = System.Globalization.CultureInfo.GetCultureInfo("es-AR");
+}
+
+<h2 class="mb-3">@ViewData["Title"]</h2>
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">Nuevo contrato</a>
+</div>
+
+@if (TempData["ok"] is string ok) { <div class="alert alert-success">@ok</div> }
+@if (TempData["err"] is string err) { <div class="alert alert-danger">@err</div> }
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Inquilino</th>
+            <th>Inmueble</th>
+            <th>Fecha inicio</th>
+            <th>Fecha fin (pactada)</th>
+            <th>Estado</th>                 <!-- <- columna estado -->
+            <th class="text-end">Monto mensual</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var c in Model)
     {
-        EstadoContrato.Vigente    => "badge bg-success",
-        EstadoContrato.Borrador   => "badge bg-secondary",
-        EstadoContrato.Finalizado => "badge bg-dark",
-        EstadoContrato.Rescindido => "badge bg-danger",
-        _ => "badge bg-light text-dark"
-    };
-}
+        <tr>
+            <td>
+                @(c.Inquilino is null
+                    ? $"(Id: {c.InquilinoId})"
+                    : $"{c.Inquilino.Apellido} {c.Inquilino.Nombre}")
+            </td>
+            <td>@(c.Inmueble?.Direccion ?? $"(Id: {c.InmuebleId})")</td>
+            <td>@c.FechaInicio.ToString("dd/MM/yyyy")</td>
+            <td>@c.FechaFin.ToString("dd/MM/yyyy")</td>
 
-<h1>Index</h1>
-<p><a asp-action="Create">Create New</a></p>
+            <!-- Estado como badge -->
+            <td>
+                @{
+                    var badge = c.Estado == EstadoContrato.Vigente ? "success"
+                               : c.Estado == EstadoContrato.Rescindido ? "warning text-dark"
+                               : "secondary";
+                }
+                <span class="badge bg-@badge">@c.Estado</span>
+            </td>
 
-@if (Model == null || !Model.Any())
-{
-    <div class="alert alert-info">No hay contratos.</div>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Inquilino</th>
-                <th>Inmueble</th>
-                <th>FechaInicio</th>
-                <th>FechaFin</th>
-                <th>Estado</th>
-                <th class="text-end">MontoMensual</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var c in Model)
-        {
-            var inq = c.Inquilino != null ? $"{c.Inquilino.Apellido}, {c.Inquilino.Nombre}" : $"(Id: {c.InquilinoId})";
-            var inm = c.Inmueble  != null ? c.Inmueble.Direccion : $"(Id: {c.InmuebleId})";
-            <tr>
-                <td>@inq</td>
-                <td>@inm</td>
-                <td>@c.FechaInicio.ToString("dd/MM/yyyy")</td>
-                <td>@c.FechaFin.ToString("dd/MM/yyyy")</td>
-                <td><span class="@EstadoBadge(c.Estado)">@c.Estado</span></td>
-                <td class="text-end">@string.Format("{0:N2}", c.MontoMesual)</td>
-                <td class="text-nowrap">
-                    <a asp-action="Edit" asp-route-id="@c.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@c.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@c.Id">Delete</a>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+            <!-- Moneda en es-AR -->
+            <td class="text-end">@c.MontoMesual.ToString("C", ar)</td>
+
+            <td class="text-nowrap text-end">
+                <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-sm btn-outline-secondary">Detalles</a>
+                <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-sm btn-primary">Editar</a>
+                @if (User.IsInRole(nameof(RolUsuario.Administrador))){
+                    <a asp-action="Delete" asp-route-id="@c.Id" class="btn btn-sm btn-danger">Eliminar</a>
+                }
+               
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+
+
 
 
 

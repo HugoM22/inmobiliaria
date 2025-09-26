@@ -1,97 +1,70 @@
 @model IEnumerable<Inmobiliaria1.Models.Pago>
-
+@using Inmobiliaria1.Models
 @{
-    Layout = null;
+    var c  = (Inmobiliaria1.Models.Contrato)ViewBag.Contrato;
+    var ar = System.Globalization.CultureInfo.GetCultureInfo("es-AR");
+    ViewData["Title"] = $"Pagos del contrato #{c.Id}";
 }
+<h3>@ViewData["Title"] – @c.Inmueble?.Direccion</h3>
 
-<!DOCTYPE html>
+<div class="mb-2">
+    <a asp-action="Create" asp-route-contratoId="@c.Id" class="btn btn-primary">Nuevo pago</a>
+    <a asp-controller="Contratos" asp-action="Details" asp-route-id="@c.Id" class="btn btn-link">Volver al contrato</a>
+</div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+@if (TempData["ok"] is string ok) { <div class="alert alert-success">@ok</div> }
+@if (TempData["err"] is string err) { <div class="alert alert-danger">@err</div> }
+
+<table class="table table-striped align-middle">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Numero)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Fecha)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Importe)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Detalle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Multa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContratoId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreadoPorUsuarioId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AnuladoPorUsuarioId)
-            </th>
-            <th></th>
+            <th>#</th>
+            <th>Fecha</th>
+            <th class="text-end">Importe</th>
+            <th>Detalle</th>
+            <th>Estado</th>
+            <th class="text-nowrap"></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
+    @foreach (var p in Model)
+    {
+        <tr class="@(p.Estado == EstadoPago.Anulado ? "table-danger" : "")">
+            <td>@p.Numero</td>
+            <td>@p.Fecha.ToString("dd/MM/yyyy")</td>
+            <td class="text-end">
+                @p.Importe.ToString("C", ar)
+                @if (p.Multa) { <span class="badge bg-warning text-dark ms-1">Multa</span> }
             </td>
+            <td>@p.Detalle</td>
             <td>
-                @Html.DisplayFor(modelItem => item.Numero)
+                @if (p.Estado == EstadoPago.Anulado) { <span class="badge bg-danger">Anulado</span>}
+                else { <span class="badge bg-success">Activo</span> }
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Fecha)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Importe)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Detalle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Multa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContratoId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreadoPorUsuarioId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AnuladoPorUsuarioId)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            <td class="text-nowrap text-end">
+                <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Auditoría</a>
+                @if (p.Estado == EstadoPago.Activo)
+                {
+                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-primary">Editar detalle</a>
+                    @if (User.IsInRole(nameof(RolUsuario.Administrador)))
+                    {
+                        <form asp-action="Anular" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@p.Id" />
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Anular pago?');">Anular</button>
+                        </form>
+                    }
+                }
             </td>
         </tr>
-}
+    }
     </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="2" class="text-end">Total pagado (activos):</th>
+            <th class="text-end">@((decimal)ViewBag.Total! == 0 ? "-" : ((decimal)ViewBag.Total!).ToString("C", ar))</th>
+            <th colspan="3"></th>
+        </tr>
+    </tfoot>
 </table>
-</body>
-</html>
+

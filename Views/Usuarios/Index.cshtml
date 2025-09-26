@@ -1,0 +1,47 @@
+@model IEnumerable<Inmobiliaria1.Models.Usuario>
+@using Inmobiliaria1.Models
+@{
+    ViewData["Title"] = "Usuarios";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Usuarios</h2>
+    <a asp-action="Create" class="btn btn-success">Nuevo usuario</a>
+</div>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Activo</th>
+            <th>Avatar</th>
+            <th style="width:210px;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Email</td>
+                <td>@u.Rol</td>
+                <td>
+                    @if (u.Activo) { <span class="badge bg-success">Activo</span> }
+                    else { <span class="badge bg-secondary">Inactivo</span> }
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(u.Avatar))
+                    {
+                        <img src="@Url.Content(u.Avatar)" alt="avatar" style="height:40px;width:40px;object-fit:cover;border-radius:50%;" />
+                    }
+                </td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-primary">Editar</a>
+                    @if (User.IsInRole(nameof(RolUsuario.Administrador)))
+                    {
+                        <a asp-action="Delete" asp-route-id="@u.Id" class="btn btn-sm btn-danger">Eliminar</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

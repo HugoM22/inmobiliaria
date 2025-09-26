@@ -1,0 +1,36 @@
+@model Inmobiliaria1.Models.Usuario
+@{
+    ViewData["Title"] = "Detalles de usuario";
+}
+<h2 class="mb-3">Detalles</h2>
+
+<div class="card p-3 mb-3">
+    <dl class="row">
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        <dt class="col-sm-3">Rol</dt>
+        <dd class="col-sm-9">@Model.Rol</dd>
+
+        <dt class="col-sm-3">Estado</dt>
+        <dd class="col-sm-9">
+            @if (Model.Activo) { <span class="badge bg-success">Activo</span> }
+            else { <span class="badge bg-secondary">Inactivo</span> }
+        </dd>
+
+        <dt class="col-sm-3">Avatar</dt>
+        <dd class="col-sm-9">
+            @if (!string.IsNullOrEmpty(Model.Avatar))
+            {
+                <img src="@Url.Content(Model.Avatar)" style="height:80px;width:80px;object-fit:cover;border-radius:12px;" />
+                <div class="text-muted small mt-1">@Model.Avatar</div>
+            }
+            else { <span class="text-muted">—</span> }
+        </dd>
+    </dl>
+</div>
+
+<div class="d-flex gap-2">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+</div>

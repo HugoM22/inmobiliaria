@@ -8,5 +8,6 @@ public interface IInmuebleRepository
     Task<int> ModificarAsync(Inmueble i);
     Task<int> BajaAsync(int id);
     Task<Inmueble?> ObtenerPorIdAsync(int id);
+     Task<List<Inmueble>> ListarDisponiblesAsync();
     Task<List<Inmueble>> ObtenerTodosAsync(string? q = null, int? propietarioId = null, int? tipoId = null);
 }

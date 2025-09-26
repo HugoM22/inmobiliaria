@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Inmobiliaria1.Data.Repos;
 using Inmobiliaria1.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inmobiliaria1.Controllers;
 
+[Authorize]
 public class InmueblesController : Controller
 {
     private readonly IInmuebleRepository _inmRepo;
@@ -63,7 +65,7 @@ public class InmueblesController : Controller
             await CargarCombosAsync(m.TipoInmuebleId, m.PropietarioId);
             return View(m);
         }
-
+        var direccionOriginal = m.Direccion;
         try
         {
             await _inmRepo.AltaAsync(m);
@@ -110,6 +112,7 @@ public class InmueblesController : Controller
     }
 
 
+    [Authorize(Roles = nameof(RolUsuario.Administrador))]
     public async Task<IActionResult> Delete(int id)
     {
         var x = await _inmRepo.ObtenerPorIdAsync(id);
@@ -119,9 +122,23 @@ public class InmueblesController : Controller
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = nameof(RolUsuario.Administrador))]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         await _inmRepo.BajaAsync(id);
         return RedirectToAction(nameof(Index));
     }
+    [Authorize]
+    public async Task<IActionResult> Disponibles()
+    {
+        var data = await _inmRepo.ListarDisponiblesAsync();
+        return View(data);
+    }
+    [HttpGet]
+public async Task<IActionResult> Precio(int id)
+{
+    var i = await _inmRepo.ObtenerPorIdAsync(id);
+    if (i is null) return NotFound();
+    return Content(i.Precio.ToString(System.Globalization.CultureInfo.InvariantCulture));
+}
 }

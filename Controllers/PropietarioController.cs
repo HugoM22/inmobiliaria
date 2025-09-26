@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Inmobiliaria1.Models;
 using Inmobiliaria1.Data.Repos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inmobiliaria1.Controllers;
 
+[Authorize]
 public class PropietariosController : Controller
 {
     private readonly IPropietarioRepository _repo;
@@ -27,21 +29,23 @@ public class PropietariosController : Controller
     {
         if (!ModelState.IsValid) return View(p);
         var nombreOriginal = p.Nombre;
-        try {
+        try
+        {
             await _repo.AltaAsync(p);
-            return RedirectToAction(nameof(Index)); }
+            return RedirectToAction(nameof(Index));
+        }
         catch (SqlException ex) when (ex.Number is 2601 or 2627)
         { ModelState.AddModelError("", "DNI o Email ya existe."); return View(p); }
     }
 
-    
+
     public async Task<IActionResult> Edit(int id)
     {
         var p = await _repo.ObtenerPorIdAsync(id);
         return p == null ? NotFound() : View(p);
     }
 
- 
+
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, Propietario p)
     {
@@ -53,6 +57,7 @@ public class PropietariosController : Controller
     }
 
 
+[Authorize(Roles = nameof(RolUsuario.Administrador))]
     public async Task<IActionResult> Delete(int id)
     {
         var p = await _repo.ObtenerPorIdAsync(id);
@@ -61,6 +66,7 @@ public class PropietariosController : Controller
 
 
     [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
+    [Authorize(Roles = nameof(RolUsuario.Administrador))]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         await _repo.BajaAsync(id);

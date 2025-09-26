@@ -1,0 +1,11 @@
+@model Inmobiliaria1.Models.Usuario
+@{
+    ViewData["Title"] = "Eliminar usuario";
+}
+<h2 class="mb-3 text-danger">Eliminar usuario</h2>
+<div class="alert alert-warning">¿Confirmás eliminar a <strong>@Model.Email</strong>?</div>
+<form asp-action="Delete" method="post" class="d-flex gap-2">
+    <input type="hidden" asp-for="Id" />
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+</form>

@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria1.Models;
 using Inmobiliaria1.Data.Repos;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize]
 public class InquilinosController : Controller
 {
     private readonly IInquilinoRepository _repo;
@@ -43,12 +45,14 @@ public class InquilinosController : Controller
         { ModelState.AddModelError("", "DNI o Email ya existe."); return View(i); }
     }
 
+    [Authorize(Roles = nameof(RolUsuario.Administrador))]
     public async Task<IActionResult> Delete(int id)
     {
         var i = await _repo.ObtenerPorIdAsync(id);
         return i == null ? NotFound() : View(i);
     }
 
+    [Authorize(Roles = nameof(RolUsuario.Administrador))]
     [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {

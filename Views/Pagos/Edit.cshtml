@@ -1,87 +1,27 @@
 @model Inmobiliaria1.Models.Pago
-
 @{
-    Layout = null;
+    ViewData["Title"] = $"Editar pago #{Model.Numero}";
 }
+<h3>@ViewData["Title"]</h3>
 
-<!DOCTYPE html>
+<form method="post" class="card p-3">
+    @Html.AntiForgeryToken()
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Edit</title>
-</head>
-<body>
+    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="hidden" name="contratoId" value="@Model.ContratoId" />
 
-<h4>Pago</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Numero" class="control-label"></label>
-                <input asp-for="Numero" class="form-control" />
-                <span asp-validation-for="Numero" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Fecha" class="control-label"></label>
-                <input asp-for="Fecha" class="form-control" />
-                <span asp-validation-for="Fecha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Importe" class="control-label"></label>
-                <input asp-for="Importe" class="form-control" />
-                <span asp-validation-for="Importe" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Detalle" class="control-label"></label>
-                <input asp-for="Detalle" class="form-control" />
-                <span asp-validation-for="Detalle" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Multa" /> @Html.DisplayNameFor(model => model.Multa)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContratoId" class="control-label"></label>
-                <input asp-for="ContratoId" class="form-control" />
-                <span asp-validation-for="ContratoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreadoPorUsuarioId" class="control-label"></label>
-                <input asp-for="CreadoPorUsuarioId" class="form-control" />
-                <span asp-validation-for="CreadoPorUsuarioId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AnuladoPorUsuarioId" class="control-label"></label>
-                <input asp-for="AnuladoPorUsuarioId" class="form-control" />
-                <span asp-validation-for="AnuladoPorUsuarioId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="mb-2">
+        <label class="form-label">Detalle</label>
+        <input name="detalle" class="form-control" value="@Model.Detalle" />
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" asp-route-contratoId="@Model.ContratoId" class="btn btn-outline-secondary">Volver</a>
+        <button class="btn btn-primary">Guardar</button>
+    </div>
+</form>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/localization/messages_es.min.js"></script>
 }
-</body>
-</html>
