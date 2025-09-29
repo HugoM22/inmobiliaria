@@ -14,7 +14,7 @@ public class Contrato
 
     [Range(0.01, 9999999)]
     [DataType(DataType.Currency)]
-    public decimal MontoMesual { get; set; }
+    public decimal MontoMensual { get; set; }
 
     [Required]
     public EstadoContrato Estado { get; set; } = EstadoContrato.Vigente;

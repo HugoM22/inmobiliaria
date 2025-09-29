@@ -32,7 +32,7 @@ public class ContratoRepository : IContratoRepository
     var pMonto = cmd.Parameters.Add("@MontoMensual", SqlDbType.Decimal);
     pMonto.Precision = 18;
     pMonto.Scale = 2;
-    pMonto.Value = cont.MontoMesual;
+    pMonto.Value = cont.MontoMensual;
 
     cmd.Parameters.Add(new("@Estado", SqlDbType.NVarChar, 50) { Value = cont.Estado.ToString() });
 
@@ -73,7 +73,7 @@ public class ContratoRepository : IContratoRepository
         var pMonto = cmd.Parameters.Add("@MontoMensual", SqlDbType.Decimal);
         pMonto.Precision = 18;
         pMonto.Scale = 2;
-        pMonto.Value = cont.MontoMesual;
+        pMonto.Value = cont.MontoMensual;
 
         cmd.Parameters.Add(new("@Estado", SqlDbType.NVarChar, 50) { Value = cont.Estado.ToString() });
         cmd.Parameters.Add(new("@FechaInicio", SqlDbType.Date) { Value = cont.FechaInicio });
@@ -129,7 +129,7 @@ public class ContratoRepository : IContratoRepository
             Id = dr.GetInt32(0),
             InmuebleId = dr.GetInt32(1),
             InquilinoId = dr.GetInt32(2),
-            MontoMesual = dr.GetDecimal(3),
+            MontoMensual = dr.GetDecimal(3),
             Estado = Enum.Parse<EstadoContrato>(dr.GetString(4)),
             FechaInicio = dr.GetDateTime(5),
             FechaFin = dr.GetDateTime(6),
@@ -176,7 +176,7 @@ public class ContratoRepository : IContratoRepository
                 Id = dr.GetInt32(0),
                 InmuebleId = dr.GetInt32(1),
                 InquilinoId = dr.GetInt32(2),
-                MontoMesual = dr.GetDecimal(3),
+                MontoMensual = dr.GetDecimal(3),
                 Estado = Enum.Parse<EstadoContrato>(dr.GetString(4), true),
                 FechaInicio = dr.GetDateTime(5),
                 FechaFin = dr.GetDateTime(6),

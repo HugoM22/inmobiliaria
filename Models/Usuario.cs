@@ -7,7 +7,7 @@ public class Usuario
     public int Id { get; set; }
     [Required, EmailAddress, StringLength(120)]
     public string Email { get; set; } = "";
-    [Required, StringLength(100)]
+    [Required, StringLength(200)]
     public string PasswordHash { get; set; } = "";
 
     [StringLength(250)]

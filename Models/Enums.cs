@@ -5,11 +5,12 @@ namespace Inmobiliaria1.Models;
 public enum RolUsuario
 {
     Administrador = 1,
-    Empleado = 2
+    Empleado = 2,
+
 }
 
 public enum EstadoContrato
-{
+    {
     Borrador = 1,
     Vigente = 2,
     Finalizado = 3,
@@ -19,8 +20,8 @@ public enum EstadoContrato
 public enum EstadoPago
 {
     Activo = 1,
-    Vencido = 2,
-    Anulado = 3
+    //Vencido = 2,
+    Anulado = 2
 }
 
 public enum Uso
@@ -29,7 +30,7 @@ public enum Uso
     Comercial = 2
 }
 
-public enum EstadoInmueble
+public enum EstadoInmueble //------------------------------------------------------
 {
     [Display(Name = "Disponible")]
     Publicado = 1,

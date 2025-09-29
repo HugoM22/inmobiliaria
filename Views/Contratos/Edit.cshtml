@@ -30,17 +30,17 @@
 
     <!-- Monto mensual: no editable -->
     <div class="mb-3">
-        <label asp-for="MontoMesual" class="form-label"></label>
+        <label asp-for="MontoMensual" class="form-label"></label>
 
-        <input type="hidden" asp-for="MontoMesual" id="MontoMesual" />
+        <input type="hidden" asp-for="MontoMensual" id="MontoMensual" />
 
         <input type="text"
             class="form-control"
-            id="MontoMesual_display"
-            value="@Model.MontoMesual.ToString("C")"
+            id="MontoMensual_display"
+            value="@Model.MontoMensual.ToString("C")"
             readonly />
 
-        <span asp-validation-for="MontoMesual" class="text-danger"></span>
+        <span asp-validation-for="MontoMensual" class="text-danger"></span>
         <div class="form-text">Se define por el inmueble seleccionado.</div>
     </div>
 
@@ -83,7 +83,7 @@
             const r = await fetch(`/Inmuebles/Precio?id=${id}`);
             if (!r.ok) return;
             const precio = await r.text();
-            const input = document.getElementById("MontoMesual");
+            const input = document.getElementById("MontoMensual");
             if (input) input.value = precio;
         });
     </script>

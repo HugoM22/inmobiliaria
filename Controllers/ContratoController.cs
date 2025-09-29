@@ -83,7 +83,7 @@ public class ContratosController : Controller
         if (inm is null)
             ModelState.AddModelError(nameof(m.InmuebleId), "El inmueble seleccionado no existe.");
         else
-            m.MontoMesual = inm.Precio;
+            m.MontoMensual = inm.Precio;
 
         if (await _ctrRepo.ExisteSolapamientoAsync(m.InmuebleId, m.FechaInicio, m.FechaFin))
             ModelState.AddModelError(string.Empty, "El inmueble está ocupado en esas fechas.");

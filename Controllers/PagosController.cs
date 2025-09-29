@@ -47,7 +47,7 @@ public class PagosController : Controller
         return View(new Pago {
             ContratoId = contratoId,
             Fecha      = DateTime.Today,
-            Importe    = ctr.MontoMesual,
+            Importe    = ctr.MontoMensual,
             Estado     = EstadoPago.Activo
         });
     }

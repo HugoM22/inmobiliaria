@@ -26,18 +26,18 @@
 
     <!-- Monto mensual: NO editable -->
     <div class="mb-3">
-        <label asp-for="MontoMesual" class="form-label"></label>
+        <label asp-for="MontoMensual" class="form-label"></label>
 
         <!-- el valor real que se postea -->
-        <input type="hidden" asp-for="MontoMesual" id="MontoMesual" />
+        <input type="hidden" asp-for="MontoMensual" id="MontoMensual" />
 
         <input type="text"
                class="form-control"
-               id="MontoMesual_display"
-               value="@(Model?.MontoMesual > 0 ? Model.MontoMesual.ToString("C", ar) : "")"
+               id="MontoMensual_display"
+               value="@(Model?.MontoMensual > 0 ? Model.MontoMensual.ToString("C", ar) : "")"
                readonly />
 
-        <span asp-validation-for="MontoMesual" class="text-danger"></span>
+        <span asp-validation-for="MontoMensual" class="text-danger"></span>
         <div class="form-text">Se define por el inmueble seleccionado.</div>
     </div>
 
@@ -80,10 +80,10 @@
             const txt = await r.text();   
             const val = parseFloat(txt);
 
-            const hidden = document.getElementById("MontoMesual");
+            const hidden = document.getElementById("MontoMensual");
             if (hidden) hidden.value = isNaN(val) ? "" : val;
 
-            const disp = document.getElementById("MontoMesual_display");
+            const disp = document.getElementById("MontoMensual_display");
             if (disp)  disp.value = isNaN(val) ? "" : fmt.format(val);
         });
     </script>
