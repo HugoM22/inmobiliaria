@@ -42,7 +42,10 @@
                 else { <span class="badge bg-success">Activo</span> }
             </td>
             <td class="text-nowrap text-end">
-                <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Auditoría</a>
+                @if (User.IsInRole(nameof(RolUsuario.Administrador))){
+                    <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Auditoría</a>
+                }
+                
                 @if (p.Estado == EstadoPago.Activo)
                 {
                     <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-primary">Editar detalle</a>
